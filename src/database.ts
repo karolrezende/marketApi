@@ -1,4 +1,4 @@
 import { iCleaning, iFood } from "./interfaces"
 
-const market :  = []
+const market : (iCleaning| iFood)[] = []
 export default market
