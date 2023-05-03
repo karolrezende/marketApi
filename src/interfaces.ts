@@ -2,13 +2,13 @@ interface iCleaning {
     name:string,
     price: number,
     weight: number,
-    section: 'cleaning'
+    section: "cleaning"
 }
 interface iFood{
     name:string,
     price: number,
     weight: number,
     calories: number,
-    section: 'food'
+    section: "food"
 }
 export {iCleaning, iFood}
