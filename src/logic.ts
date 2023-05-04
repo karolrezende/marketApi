@@ -1,11 +1,20 @@
 import { Request, Response } from "express";
 import { iCleaning, iFood } from "./interfaces";
 import market from "./database";
-
+const getProduct = (req: Request, res: Response): Response =>{
+    if(market.length < 0){
+        return res.status(200).json("vazio")
+    }
+    return res.status(200).json(market)
+}
+const getSingleProduct = (req: Request, res: Response): Response =>{
+    return res.status(201)
+}
 const createProduct = (req: Request, res: Response):Response =>{
     const {section} = req.body
     if(section == "food"){
         const newProduct: iFood = {
+            id: new Date().getTime(),
             name: req.body.name,
             price: req.body.price,
             weight: req.body.weight,
@@ -17,6 +26,7 @@ const createProduct = (req: Request, res: Response):Response =>{
     }else
     if(section == "cleaning"){
         const newProduct: iCleaning = {
+            id: new Date().getTime(),
             name: req.body.name,
             price: req.body.price,
             weight: req.body.weight,
@@ -28,4 +38,4 @@ const createProduct = (req: Request, res: Response):Response =>{
         return res.status(400).json({error: 'invalid section'})
     }
 }
-export {createProduct}
+export {getProduct, getSingleProduct, createProduct}
