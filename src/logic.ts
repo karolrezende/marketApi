@@ -8,7 +8,7 @@ const getProduct = (req: Request, res: Response): Response =>{
     return res.status(200).json(market)
 }
 const getSingleProduct = (req: Request, res: Response): Response =>{
-    return res.status(201)
+    return res.status(201).json(res.locals.product)
 }
 const createProduct = (req: Request, res: Response):Response =>{
     const {section} = req.body
@@ -38,4 +38,15 @@ const createProduct = (req: Request, res: Response):Response =>{
         return res.status(400).json({error: 'invalid section'})
     }
 }
-export {getProduct, getSingleProduct, createProduct}
+const patchProduct = (req: Request, res:Response): Response=>{
+    const product = res.locals.product
+    const findIndex = market.findIndex(prod => prod.id === Number(product.id))
+
+    const patchProduct = {
+        ...market[findIndex],
+        ...req.body
+    }
+    market[findIndex] = patchProduct
+    return res.status(200).json(patchProduct)  
+}
+export {getProduct, getSingleProduct, createProduct, patchProduct}
