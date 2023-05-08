@@ -1,6 +1,14 @@
 import { Request, Response } from "express";
-import { iCleaning, iFood } from "./interfaces";
+import { iCleaning, iFood, iProduct } from "./interfaces";
 import market from "./database";
+// const getId = (req: Request, res: Response): Response =>{
+//     const id = req.params.id
+//     const newId = market.find(product => product.id === Number(id))
+
+//     if(newId === undefined){
+//         return res.status(404).json({'Produto não encontrado!'})
+//     }
+// }
 const getProduct = (req: Request, res: Response): Response =>{
     if(market.length < 0){
         return res.status(200).json("vazio")
@@ -10,34 +18,37 @@ const getProduct = (req: Request, res: Response): Response =>{
 const getSingleProduct = (req: Request, res: Response): Response =>{
     return res.status(201).json(res.locals.product)
 }
-const createProduct = (req: Request, res: Response):Response =>{
-    const {section} = req.body
-    if(section == "food"){
-        const newProduct: iFood = {
-            id: new Date().getTime(),
-            name: req.body.name,
-            price: req.body.price,
-            weight: req.body.weight,
-            calories: req.body.calories,
-            section: req.body.section
+const createProduct = (req: Request, res: Response): Response =>{
+    req.body.forEach((element: any, index: number) => {
+        if(element.section === "food"){
+            const data: any = element
+            const newProduct: iFood = {
+                id: market.length+1,
+                ...data,
+                expirationDate: new Date().getTime()
+            }
+            market.push(newProduct)
         }
-        market.push(newProduct)
-        return res.status(201).json(newProduct)
-    }else
-    if(section == "cleaning"){
-        const newProduct: iCleaning = {
-            id: new Date().getTime(),
-            name: req.body.name,
-            price: req.body.price,
-            weight: req.body.weight,
-            section: req.body.section
+        if(element.section === "cleaning"){
+            const data: any = element
+            const newProduct: iCleaning = {
+                id: market.length+1,
+                ...data,
+                expirationDate: new Date().getTime()
+            }
+            market.push(newProduct)
         }
-        market.push(newProduct)
-        return res.status(201).json(newProduct)
-    }else{
-        return res.status(400).json({error: 'invalid section'})
-    }
-}
+    })
+    const totalPrice= market.reduce((total, nowProd)=>{
+        return total+nowProd.price
+    },0 )
+    return res.status(201).json(
+        {
+            total: totalPrice,
+            market: [...market]
+        }
+    )
+} 
 const patchProduct = (req: Request, res:Response): Response=>{
     const product = res.locals.product
     const findIndex = market.findIndex(prod => prod.id === Number(product.id))
@@ -49,4 +60,10 @@ const patchProduct = (req: Request, res:Response): Response=>{
     market[findIndex] = patchProduct
     return res.status(200).json(patchProduct)  
 }
-export {getProduct, getSingleProduct, createProduct, patchProduct}
+const deleteProduct = (req: Request, res: Response) : Response =>{
+    const productId = res.locals.product.id
+    const index = market.findIndex(prod => prod.id === Number(productId))
+    market.splice(index, 1)
+    return res.status(200).json('Produto deletado!')
+}
+export {getProduct, getSingleProduct, createProduct, patchProduct, deleteProduct}

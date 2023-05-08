@@ -9,5 +9,13 @@ const verifyGetProduct = (req:Request, res: Response, next: NextFunction): Respo
     res.locals.product = product
     return next()
 }
+const verifyName = (req: Request, res: Response, next: NextFunction) : Response | void =>{
+    const name = market.find(prod=> prod.name === req.body.name)
+    console.log(req.body)
+    if(name !== undefined){
+        return res.status(409).json("Esse produto já está cadastrado")
+    }
+    return next()
+}
 
-export {verifyGetProduct}
+export {verifyGetProduct, verifyName}

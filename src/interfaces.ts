@@ -1,16 +1,16 @@
-interface iCleaning {
+interface iProduct {
     id: number,
     name:string,
     price: number,
     weight: number,
-    section: "cleaning"
+    section: 'cleaning' |'food'
+    expirationDate: number,
 }
-interface iFood{
-    id: number,
-    name:string,
-    price: number,
-    weight: number,
-    calories: number,
-    section: "food"
+interface iCleaning extends iProduct{
+    //section: "cleaning"
 }
-export {iCleaning, iFood}
+interface iFood extends iProduct{
+    calories: number
+    //section: "food"
+}
+export {iProduct, iCleaning, iFood}
